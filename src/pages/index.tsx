@@ -1,12 +1,18 @@
 import type { NextPage } from "next";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
+import shallow from "zustand/shallow";
 
 import { Todo } from "../components/todo";
 import { useTodos } from "../hooks";
 
 const Home: NextPage = () => {
-  const { todos, addTodo } = useTodos((state) => state);
+  const todos = useTodos((state) => state.todos, shallow);
+  const { addTodo, getTodos } = useTodos((state) => state);
   const [todoText, setTodoText] = useState("");
+
+  useEffect(() => {
+    getTodos();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;

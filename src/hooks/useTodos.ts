@@ -7,11 +7,12 @@ interface UseTodos {
   todos: Todo[];
   addTodo: (text: string) => void;
   removeTodo: (todoId: number) => void;
+  getTodos: () => void;
 }
 
 export const useTodos = create<UseTodos>(
   devtools((set) => ({
-    todos: [{ id: 0, text: "First todo" }],
+    todos: [],
     addTodo: (text: string) =>
       set((state) => {
         let { id } = state.todos[state.todos.length - 1];
@@ -25,5 +26,12 @@ export const useTodos = create<UseTodos>(
         ...state,
         todos: state.todos.filter(({ id }) => id !== todoId),
       })),
+
+    getTodos: async () => {
+      const fetchedTodos = await (
+        await fetch("http://localhost:3000/api/todos")
+      ).json();
+      set({ todos: fetchedTodos });
+    },
   }))
 );
